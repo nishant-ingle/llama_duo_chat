@@ -66,8 +66,12 @@ Select a topic or use a preset, hit **▶ Start Conversation**, and watch them d
 ## Project Files
 
 • llama_duo_chat/app.py: FastAPI backend, WebSocket handler, and Ollama streaming client.
+
 • llama_duo_chat/static/index.html: Side-by-side arena interface.
+
 • llama_duo_chat/static/style.css: Cyberpunk/clean dark-theme styling, status badges, and glow animations.
+
 • llama_duo_chat/static/app.js: WebSocket state management, token rendering, and client controls.
+
 • llama_duo_chat/run.sh: Quick launch script.
 
