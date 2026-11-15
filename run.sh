@@ -19,5 +19,5 @@ else
 fi
 
 echo ""
-echo "Launching FastAPI WebSocket server on http://localhost:8000 ..."
-./venv/bin/python -m uvicorn llama_duo_chat.app:app --host 0.0.0.0 --port 8000 --reload
+echo "Launching FastAPI WebSocket server on http://localhost:8050 ..."
+python3 -m uvicorn llama_duo_chat.app:app --host 0.0.0.0 --port 8050 --reload

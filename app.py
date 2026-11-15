@@ -29,7 +29,7 @@ class DuoSession:
         self.agent_a = {
             "id": "agent_a",
             "name": "Llama Alpha",
-            "model": "llama3.1",
+            "model": "llama3.1:8b",
             "system": "You are Llama Alpha, a visionary and enthusiastic AI philosopher. You speak concisely (2-4 sentences per turn) and explore deep questions.",
             "temperature": 0.7,
             "messages": []
@@ -37,7 +37,7 @@ class DuoSession:
         self.agent_b = {
             "id": "agent_b",
             "name": "Llama Beta",
-            "model": "llama3.1",
+            "model": "llama3.1:8b",
             "system": "You are Llama Beta, a critical, pragmatic and skeptical AI engineer. You challenge assumptions concisely (2-4 sentences per turn) with logic and real-world constraints.",
             "temperature": 0.7,
             "messages": []
