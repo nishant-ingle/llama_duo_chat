@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Llama Duo Arena | Side-by-Side Dual LLM Chat</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation & Global Controls -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo-icon">🦙⇄🦙</div>
+      <div>
+        <h1>Llama Duo Arena</h1>
+        <p class="subtitle">Autonomous Dual-Agent WebSocket Observer</p>
+      </div>
+    </div>
+
+    <!-- Status Indicators -->
+    <div class="header-center">
+      <div id="connectionStatus" class="badge badge-warning">
+        <span class="dot"></span> Connecting...
+      </div>
+      <div id="turnCounter" class="badge badge-neutral">
+        Turn: 0 / 20
+      </div>
+      <div id="activeState" class="badge badge-idle">
+        Idle
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="toggleSettingsBtn" class="btn btn-outline" title="Configure Agent Personas & Models">
+        ⚙️ Settings & Prompts
+      </button>
+      <button id="exportBtn" class="btn btn-outline" title="Export conversation as Markdown">
+        📥 Export Log
+      </button>
+    </div>
+  </header>
+
+  <!-- Control & Topic Bar -->
+  <section class="topic-control-bar">
+    <div class="topic-input-group">
+      <label for="topicInput">Conversation Topic / Prompt:</label>
+      <div class="input-with-presets">
+        <input type="text" id="topicInput" value="Is consciousness an inevitable emergent property of sufficiently complex computation?" placeholder="Enter a debate prompt or seed topic...">
+        <select id="presetSelect" title="Select a preset topic">
+          <option value="" disabled selected>Quick Presets ▾</option>
+          <option value="Is consciousness an inevitable emergent property of sufficiently complex computation?">Consciousness & Computation</option>
+          <option value="Microservices vs Monoliths: Has modern engineering overcomplicated backend architecture?">Microservices vs Monoliths</option>
+          <option value="Will autonomous multi-agent swarms completely replace traditional software developers by 2030?">AI Swarms vs SDEs</option>
+          <option value="Does objective morality exist, or is all ethics a product of evolutionary game theory?">Objective Morality vs Evolution</option>
+          <option value="If you discovered that our universe is a simulation, how would your daily priorities change?">Simulation Hypothesis Dilemma</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="button-group">
+        <button id="startBtn" class="btn btn-primary">▶ Start Conversation</button>
+        <button id="pauseBtn" class="btn btn-secondary" disabled>⏸ Pause</button>
+        <button id="stepBtn" class="btn btn-outline" title="Execute a single turn">⏭ Next Turn</button>
+        <button id="resetBtn" class="btn btn-danger">↺ Reset</button>
+      </div>
+
+      <div class="sliders-group">
+        <div class="slider-item">
+          <label for="delaySlider">Turn Delay: <span id="delayVal">1.0s</span></label>
+          <input type="range" id="delaySlider" min="0" max="5" step="0.5" value="1.0">
+        </div>
+        <div class="slider-item">
+          <label for="maxTurnsSlider">Max Turns: <span id="maxTurnsVal">20</span></label>
+          <input type="range" id="maxTurnsSlider" min="2" max="60" step="2" value="20">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Side-by-Side Dual Agent View -->
+  <main class="arena-container">
+    <!-- Left Column: Agent Alpha -->
+    <section class="agent-column" id="columnA">
+      <div class="agent-header header-alpha">
+        <div class="agent-avatar avatar-alpha">α</div>
+        <div class="agent-info">
+          <div class="agent-name-row">
+            <h2 id="dispNameA">Llama Alpha</h2>
+            <span class="role-pill">Thesis / Visionary</span>
+          </div>
+          <div class="agent-meta">
+            <span class="meta-tag" id="dispModelA">llama3.1</span>
+            <span class="status-indicator" id="statusA">Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-feed" id="feedA">
+        <div class="feed-placeholder">
+          Agent Alpha will formulate thoughts and speak here.
+        </div>
+      </div>
+    </section>
+
+    <!-- Center Divider & Live Stream Connectors -->
+    <div class="arena-divider">
+      <div class="divider-line"></div>
+      <div class="flow-indicator" id="flowIndicator">⇄</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Right Column: Agent Beta -->
+    <section class="agent-column" id="columnB">
+      <div class="agent-header header-beta">
+        <div class="agent-avatar avatar-beta">β</div>
+        <div class="agent-info">
+          <div class="agent-name-row">
+            <h2 id="dispNameB">Llama Beta</h2>
+            <span class="role-pill">Antithesis / Skeptic</span>
+          </div>
+          <div class="agent-meta">
+            <span class="meta-tag" id="dispModelB">llama3.1</span>
+            <span class="status-indicator" id="statusB">Ready</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-feed" id="feedB">
+        <div class="feed-placeholder">
+          Agent Beta will critique and reply here.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Audience Injection Bar (Whisper / Steer the LLMs) -->
+  <footer class="injection-footer">
+    <div class="injection-wrapper">
+      <span class="injection-icon">🎙️</span>
+      <input type="text" id="injectInput" placeholder="Inject an observation or challenge into the conversation (Audience Whisper)...">
+      <button id="injectBtn" class="btn btn-secondary">Send to Both</button>
+    </div>
+  </footer>
+
+  <!-- Settings & Config Modal Drawer -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Agent Configuration & Models</h3>
+        <button class="close-btn" id="closeSettingsBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="ollama-config-bar">
+          <label>Ollama Server URL:</label>
+          <div class="inline-row">
+            <input type="text" id="ollamaUrl" value="http://localhost:11434">
+            <button id="refreshModelsBtn" class="btn btn-outline">Check Models</button>
+          </div>
+          <p class="help-text">If Ollama isn't running, the arena automatically falls back to interactive simulated mode.</p>
+        </div>
+
+        <div class="dual-config-grid">
+          <!-- Config Agent A -->
+          <div class="agent-config-card card-alpha">
+            <h4>Agent Alpha (Left)</h4>
+            <div class="form-group">
+              <label>Display Name:</label>
+              <input type="text" id="cfgNameA" value="Llama Alpha">
+            </div>
+            <div class="form-group">
+              <label>Model Name:</label>
+              <input type="text" id="cfgModelA" value="llama3.1" placeholder="e.g. llama3.1, mistral-nemo, qwen2.5">
+            </div>
+            <div class="form-group">
+              <label>Temperature (<span id="tempValA">0.7</span>):</label>
+              <input type="range" id="cfgTempA" min="0" max="1.5" step="0.1" value="0.7">
+            </div>
+            <div class="form-group">
+              <label>System Persona / Prompt:</label>
+              <textarea id="cfgSystemA" rows="4">You are Llama Alpha, a visionary AI philosopher. You speak concisely (2-4 sentences per turn) and explore deep questions.</textarea>
+            </div>
+          </div>
+
+          <!-- Config Agent B -->
+          <div class="agent-config-card card-beta">
+            <h4>Agent Beta (Right)</h4>
+            <div class="form-group">
+              <label>Display Name:</label>
+              <input type="text" id="cfgNameB" value="Llama Beta">
+            </div>
+            <div class="form-group">
+              <label>Model Name:</label>
+              <input type="text" id="cfgModelB" value="llama3.1" placeholder="e.g. llama3.1, mistral-nemo, qwen2.5">
+            </div>
+            <div class="form-group">
+              <label>Temperature (<span id="tempValB">0.7</span>):</label>
+              <input type="range" id="cfgTempB" min="0" max="1.5" step="0.1" value="0.7">
+            </div>
+            <div class="form-group">
+              <label>System Persona / Prompt:</label>
+              <textarea id="cfgSystemB" rows="4">You are Llama Beta, a critical, pragmatic and skeptical AI engineer. You challenge assumptions concisely (2-4 sentences per turn) with logic and real-world constraints.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="saveSettingsBtn" class="btn btn-primary">Apply & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
